@@ -60,10 +60,3 @@ class LLMConnector:
         '''
         self.history += [q,a]
         self.history = self.history[-self.history_len:]
-
-
-if __name__ == '__main__': 
-API_KEY = 'sk-2f5d128f6cb544f3883311dd7e86690d'
-llm = LLMConnector(URL, API_KEY, Models.FOURTEEN_B)
-llm.chat("Hello. I will ask you a question in my next chat to you. Remember, the answer to my question is 14.")
-llm.chat("How many fingers am I holding up?")

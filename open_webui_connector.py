@@ -16,12 +16,13 @@ class LLMConnector:
             self.model = model.value 
         else: 
             self.model = model 
+
         self.system_prompt = system_prompt
 
         self.history_len = history_len
         self.history = []
 
-    def chat(self, message, use_history=True, use_system_prompt=True): 
+    def chat(self, message, use_history=True, use_system_prompt=True, remember_chat=True): 
         endpoint = self.url + 'chat/completions'
         headers = {
             'Authorization': f'Bearer {self.api}',
@@ -43,4 +44,26 @@ class LLMConnector:
         }
 
         response = r.post(endpoint, headers=headers, json=payload)
-        return response.json() 
+        ret = response.json() 
+
+        if remember_chat: 
+            self._remember_chat(messages[-1], ret['choices'][0]['message'])
+
+        return ret 
+
+    def clear_history(self): 
+        self.history = []
+
+    def _remember_chat(self, q,a):
+        '''
+        Logs user's messages and llm's responses 
+        '''
+        self.history += [q,a]
+        self.history = self.history[-self.history_len:]
+
+
+if __name__ == '__main__': 
+API_KEY = 'sk-2f5d128f6cb544f3883311dd7e86690d'
+llm = LLMConnector(URL, API_KEY, Models.FOURTEEN_B)
+llm.chat("Hello. I will ask you a question in my next chat to you. Remember, the answer to my question is 14.")
+llm.chat("How many fingers am I holding up?")

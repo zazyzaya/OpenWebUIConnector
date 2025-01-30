@@ -11,7 +11,11 @@ class LLMConnector:
     def __init__(self, url, api, model, history_len=10, system_prompt=''): 
         self.url = url 
         self.api = api 
-        self.model = model 
+        
+        if isinstance(model, Models): 
+            self.model = model.value 
+        else: 
+            self.model = model 
         self.system_prompt = system_prompt
 
         self.history_len = history_len
